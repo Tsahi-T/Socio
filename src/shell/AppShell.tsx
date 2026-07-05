@@ -8,14 +8,7 @@ import { useTheme } from '../state/useTheme';
 import { IconButton } from '../ui/IconButton';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { useToast } from '../ui/Toast';
-import {
-  DownloadIcon,
-  MoonIcon,
-  RefreshIcon,
-  SunIcon,
-  UndoIcon,
-  UploadIcon,
-} from '../ui/icons';
+import { DownloadIcon, MoonIcon, RefreshIcon, SunIcon, UndoIcon, UploadIcon } from '../ui/icons';
 import { STRINGS } from '../i18n/strings';
 
 export type AppMode = 'diagnosis' | 'tools';
@@ -85,7 +78,11 @@ export function AppShell({ mode, onModeChange, onExport, onImportFile, children 
             <IconButton label={STRINGS.actions.import} onClick={() => fileRef.current?.click()}>
               <UploadIcon />
             </IconButton>
-            <IconButton label={STRINGS.actions.reset} tone="danger" onClick={() => setConfirmReset(true)}>
+            <IconButton
+              label={STRINGS.actions.reset}
+              tone="danger"
+              onClick={() => setConfirmReset(true)}
+            >
               <RefreshIcon />
             </IconButton>
             <IconButton

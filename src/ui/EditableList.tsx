@@ -81,7 +81,12 @@ function SortableRow({
   );
 }
 
-export function EditableList({ items, onChange, placeholder, numbered = false }: EditableListProps) {
+export function EditableList({
+  items,
+  onChange,
+  placeholder,
+  numbered = false,
+}: EditableListProps) {
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })

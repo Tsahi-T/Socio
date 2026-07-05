@@ -27,7 +27,13 @@ const VARIANTS: Record<Variant, string> = {
     'bg-transparent text-[var(--color-danger)] border border-transparent hover:bg-[var(--color-danger-soft)]',
 };
 
-export function Button({ variant = 'primary', icon, children, className = '', ...rest }: ButtonProps) {
+export function Button({
+  variant = 'primary',
+  icon,
+  children,
+  className = '',
+  ...rest
+}: ButtonProps) {
   return (
     <button type="button" className={`${BASE} ${VARIANTS[variant]} ${className}`} {...rest}>
       {icon}

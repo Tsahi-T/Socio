@@ -10,7 +10,13 @@ interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   tone?: 'default' | 'danger';
 }
 
-export function IconButton({ label, children, tone = 'default', className = '', ...rest }: IconButtonProps) {
+export function IconButton({
+  label,
+  children,
+  tone = 'default',
+  className = '',
+  ...rest
+}: IconButtonProps) {
   const toneClass =
     tone === 'danger'
       ? 'text-[var(--color-text-muted)] hover:text-[var(--color-danger)] hover:bg-[var(--color-danger-soft)]'

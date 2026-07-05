@@ -19,7 +19,10 @@ interface StepperProps {
 
 export function Stepper({ steps, currentIndex, onSelect }: StepperProps) {
   return (
-    <nav aria-label="שלבי האבחון" className="flex items-center justify-center gap-1 overflow-x-auto py-1 sm:gap-2">
+    <nav
+      aria-label="שלבי האבחון"
+      className="flex items-center justify-center gap-1 overflow-x-auto py-1 sm:gap-2"
+    >
       {steps.map((step, index) => {
         const isCurrent = index === currentIndex;
         return (
@@ -42,7 +45,9 @@ export function Stepper({ steps, currentIndex, onSelect }: StepperProps) {
               />
             )}
             <span className="relative flex items-center gap-1.5">
-              {step.done && !isCurrent && <CheckIcon size={13} className="text-[var(--color-success)]" />}
+              {step.done && !isCurrent && (
+                <CheckIcon size={13} className="text-[var(--color-success)]" />
+              )}
               {step.label}
             </span>
           </button>

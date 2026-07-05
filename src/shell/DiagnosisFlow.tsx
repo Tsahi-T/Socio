@@ -2,7 +2,7 @@
  * The diagnosis flow screen: stepper + progress + the current exercise,
  * rendered dynamically through the exercise registry.
  */
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { FLOW } from '../engine/flow.config';
 import { getExerciseModule } from '../engine/registry';
 import { useSession } from '../state/SessionContext';
@@ -36,28 +36,28 @@ export function DiagnosisFlow() {
         <ProgressBar progress={(currentIndex + 1) / exercises.length} />
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.section
-          key={exercise.id}
-          initial={{ opacity: 0, x: -12 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 12 }}
-          transition={{ duration: 0.2, ease: 'easeOut' }}
-          aria-label={exercise.title}
-        >
-          <header className="mb-6 mt-2 text-center">
-            <h1 className="text-2xl font-bold text-[var(--color-text)] sm:text-3xl">
-              {exercise.title}
-            </h1>
-            <p className="mt-2 text-[var(--color-text-secondary)]">{exercise.description}</p>
-          </header>
-          <ExerciseComponent
-            exercise={exercise}
-            data={exercise.data}
-            onChange={(next) => updateExerciseData(exercise.id, next)}
-          />
-        </motion.section>
-      </AnimatePresence>
+      {/* Entrance-only animation: exit-blocking transitions can wedge when the
+          tab is backgrounded (rAF suspended), so steps swap instantly and the
+          incoming step slides in. */}
+      <motion.section
+        key={exercise.id}
+        initial={{ opacity: 0, x: -12 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.2, ease: 'easeOut' }}
+        aria-label={exercise.title}
+      >
+        <header className="mb-6 mt-2 text-center">
+          <h1 className="text-2xl font-bold text-[var(--color-text)] sm:text-3xl">
+            {exercise.title}
+          </h1>
+          <p className="mt-2 text-[var(--color-text-secondary)]">{exercise.description}</p>
+        </header>
+        <ExerciseComponent
+          exercise={exercise}
+          data={exercise.data}
+          onChange={(next) => updateExerciseData(exercise.id, next)}
+        />
+      </motion.section>
 
       <footer className="mt-8 flex items-center justify-between">
         <Button

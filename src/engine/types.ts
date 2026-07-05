@@ -56,12 +56,7 @@ export interface VotingData {
   votesPerParticipant: number;
 }
 
-export type ExerciseData =
-  | OrganizationData
-  | AssociationsData
-  | SwotData
-  | FocusData
-  | VotingData;
+export type ExerciseData = OrganizationData | AssociationsData | SwotData | FocusData | VotingData;
 
 export type ExerciseDataKind = ExerciseData['kind'];
 
@@ -99,13 +94,18 @@ export interface Session {
 export interface ExerciseComponentProps<D extends ExerciseData = ExerciseData> {
   exercise: Exercise;
   data: D;
-  /** Replace this exercise's data (immutably). */
-  onChange: (next: D) => void;
+  /**
+   * Replace this exercise's data (immutably). Accepts an updater function
+   * for changes that must build on the latest state (e.g. rapid vote clicks).
+   */
+  onChange: (next: D | ((prev: D) => D)) => void;
 }
 
-/** Context passed to serializers (e.g. organization name for headings). */
+/** Context passed to serializers (e.g. organization name, cross-exercise reads). */
 export interface SerializeContext {
   organizationName: string;
+  /** Read-only view of the whole session (e.g. voting reads focus topics). */
+  session: Session;
 }
 
 /**

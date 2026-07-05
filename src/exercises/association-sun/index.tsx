@@ -4,7 +4,12 @@
  * with different prompts (organization view / customers view).
  */
 import { AnimatePresence, motion } from 'framer-motion';
-import type { AssociationsData, ExerciseComponentProps, ExerciseModule, Item } from '../../engine/types';
+import type {
+  AssociationsData,
+  ExerciseComponentProps,
+  ExerciseModule,
+  Item,
+} from '../../engine/types';
 import { useSession } from '../../state/SessionContext';
 import { AddItemInput } from '../../ui/AddItemInput';
 import { Chip } from '../../ui/Chip';
@@ -34,9 +39,11 @@ function AssociationSunExercise({ data, onChange }: ExerciseComponentProps<Assoc
   return (
     <div className="flex flex-col items-center gap-8">
       <div className="w-full max-w-sm">
-        <AddItemInput autoFocus placeholder="מילה או משפט קצר — Enter להוספה" onAdd={(text) =>
-          setItems([...items, { id: createId(), text, createdAt: Date.now() }])
-        } />
+        <AddItemInput
+          autoFocus
+          placeholder="מילה או משפט קצר — Enter להוספה"
+          onAdd={(text) => setItems([...items, { id: createId(), text, createdAt: Date.now() }])}
+        />
       </div>
 
       <div className="flex min-h-72 w-full flex-wrap content-center items-center justify-center gap-2.5 py-4">

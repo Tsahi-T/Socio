@@ -36,9 +36,11 @@ export function createInitialSession(): Session {
 
 /* ------------------------------- Actions ------------------------------- */
 
+type ExerciseDataUpdate = ExerciseData | ((prev: ExerciseData) => ExerciseData);
+
 type SessionAction =
   | { type: 'SET_ORGANIZATION_NAME'; name: string }
-  | { type: 'UPDATE_EXERCISE_DATA'; exerciseId: string; data: ExerciseData }
+  | { type: 'UPDATE_EXERCISE_DATA'; exerciseId: string; data: ExerciseDataUpdate }
   | { type: 'GO_TO_STEP'; index: number }
   | { type: 'IMPORT_SESSION'; session: Session }
   | { type: 'RESET_SESSION' }
@@ -67,7 +69,12 @@ function sessionReducer(present: Session, action: SessionAction): Session {
       return {
         ...present,
         exercises: present.exercises.map((ex) =>
-          ex.id === action.exerciseId ? { ...ex, data: action.data } : ex
+          ex.id === action.exerciseId
+            ? {
+                ...ex,
+                data: typeof action.data === 'function' ? action.data(ex.data) : action.data,
+              }
+            : ex
         ),
         updatedAt: Date.now(),
       };
@@ -129,7 +136,7 @@ export interface SessionContextValue {
   session: Session;
   canUndo: boolean;
   setOrganizationName: (name: string) => void;
-  updateExerciseData: (exerciseId: string, data: ExerciseData) => void;
+  updateExerciseData: (exerciseId: string, data: ExerciseDataUpdate) => void;
   goToStep: (index: number) => void;
   importSession: (session: Session) => void;
   resetSession: () => void;

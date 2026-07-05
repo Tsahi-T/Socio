@@ -12,17 +12,27 @@ import { AppShell, type AppMode } from './shell/AppShell';
 import { DiagnosisFlow } from './shell/DiagnosisFlow';
 import { FLOW } from './engine/flow.config';
 import { isExerciseRegistered } from './engine/registry';
-import { EmptyState } from './ui/EmptyState';
 import { ConfirmDialog } from './ui/ConfirmDialog';
-import { LightbulbIcon } from './ui/icons';
+import { MindBoard } from './tools/mindboard/MindBoard';
 import { buildTxt, downloadTxt, exportFilename } from './io/exportTxt';
 import { parseTxt } from './io/importTxt';
 import type { Session } from './engine/types';
 import { STRINGS } from './i18n/strings';
 
-// Dev-only console hook for verifying the TXT round-trip; stripped from builds.
+// Dev-only console hook for verifying the TXT round-trips; stripped from builds.
 if (import.meta.env.DEV) {
-  (window as unknown as Record<string, unknown>).__odsDebug = { buildTxt, parseTxt };
+  void Promise.all([
+    import('./io/exportTxt'),
+    import('./io/importTxt'),
+    import('./tools/mindboard/boardTxt'),
+  ]).then(([exportIo, importIo, boardIo]) => {
+    (window as unknown as Record<string, unknown>).__odsDebug = {
+      buildTxt: exportIo.buildTxt,
+      parseTxt: importIo.parseTxt,
+      buildBoardTxt: boardIo.buildBoardTxt,
+      parseBoardTxt: boardIo.parseBoardTxt,
+    };
+  });
 }
 
 function AppContent() {
@@ -51,11 +61,7 @@ function AppContent() {
       onExport={handleExport}
       onImportFile={handleImportFile}
     >
-      {mode === 'diagnosis' ? (
-        <DiagnosisFlow />
-      ) : (
-        <EmptyState icon={<LightbulbIcon size={32} />} message="לוח החשיבה יתווסף בקרוב" />
-      )}
+      {mode === 'diagnosis' ? <DiagnosisFlow /> : <MindBoard />}
 
       <ConfirmDialog
         open={pendingImport !== null}

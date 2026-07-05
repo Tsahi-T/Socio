@@ -120,6 +120,8 @@ export interface ExerciseModule<D extends ExerciseData = ExerciseData> {
   toTxt: (data: D, ctx: SerializeContext) => string;
   /** Parse a TXT section body back into data. Throws on malformed content. */
   fromTxt: (body: string, params: Record<string, string>) => D;
+  /** Whether the exercise has meaningful content (stepper hint, never blocks). */
+  isDone: (data: D) => boolean;
 }
 
 /* ----------------------------- Flow config ----------------------------- */

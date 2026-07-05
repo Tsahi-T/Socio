@@ -3,6 +3,7 @@
  * The diagnosis flow renders only when all configured exercises are
  * registered (exercises self-register in exercises/index.ts).
  */
+import './exercises'; // side-effect: registers all exercise modules
 import { useState } from 'react';
 import { ErrorBoundary } from './ui/ErrorBoundary';
 import { ToastProvider, useToast } from './ui/Toast';
@@ -13,8 +14,6 @@ import { FLOW } from './engine/flow.config';
 import { isExerciseRegistered } from './engine/registry';
 import { EmptyState } from './ui/EmptyState';
 import { LightbulbIcon } from './ui/icons';
-
-const allRegistered = FLOW.every((step) => isExerciseRegistered(step.type));
 
 function AppContent() {
   const [mode, setMode] = useState<AppMode>('diagnosis');
@@ -37,7 +36,9 @@ function AppContent() {
 }
 
 export default function App() {
-  if (!allRegistered) {
+  // Render the flow only once every configured exercise type is registered
+  // (during staged development some modules may not exist yet).
+  if (!FLOW.every((step) => isExerciseRegistered(step.type))) {
     return (
       <main className="flex min-h-screen items-center justify-center">
         <h1 className="text-2xl font-bold">סטודיו אבחון ארגוני — בבנייה</h1>

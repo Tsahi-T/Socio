@@ -1,5 +1,5 @@
 /**
- * App root — providers + mode routing.
+ * App root — providers + mode routing + export/import wiring.
  * The diagnosis flow renders only when all configured exercises are
  * registered (exercises self-register in exercises/index.ts).
  */
@@ -7,30 +7,68 @@ import './exercises'; // side-effect: registers all exercise modules
 import { useState } from 'react';
 import { ErrorBoundary } from './ui/ErrorBoundary';
 import { ToastProvider, useToast } from './ui/Toast';
-import { SessionProvider } from './state/SessionContext';
+import { SessionProvider, useSession } from './state/SessionContext';
 import { AppShell, type AppMode } from './shell/AppShell';
 import { DiagnosisFlow } from './shell/DiagnosisFlow';
 import { FLOW } from './engine/flow.config';
 import { isExerciseRegistered } from './engine/registry';
 import { EmptyState } from './ui/EmptyState';
+import { ConfirmDialog } from './ui/ConfirmDialog';
 import { LightbulbIcon } from './ui/icons';
+import { buildTxt, downloadTxt, exportFilename } from './io/exportTxt';
+import { parseTxt } from './io/importTxt';
+import type { Session } from './engine/types';
+import { STRINGS } from './i18n/strings';
+
+// Dev-only console hook for verifying the TXT round-trip; stripped from builds.
+if (import.meta.env.DEV) {
+  (window as unknown as Record<string, unknown>).__odsDebug = { buildTxt, parseTxt };
+}
 
 function AppContent() {
   const [mode, setMode] = useState<AppMode>('diagnosis');
+  const { session, importSession } = useSession();
   const { show } = useToast();
+  const [pendingImport, setPendingImport] = useState<Session | null>(null);
+
+  const handleExport = () => {
+    downloadTxt(buildTxt(session), exportFilename(session.organizationName));
+    show(STRINGS.feedback.exported, 'success');
+  };
+
+  const handleImportFile = (text: string) => {
+    try {
+      setPendingImport(parseTxt(text));
+    } catch {
+      show(STRINGS.feedback.importError, 'error');
+    }
+  };
 
   return (
     <AppShell
       mode={mode}
       onModeChange={setMode}
-      onExport={() => show('הייצוא יחובר בשלב הבא', 'info')}
-      onImportFile={() => show('הטעינה תחובר בשלב הבא', 'info')}
+      onExport={handleExport}
+      onImportFile={handleImportFile}
     >
       {mode === 'diagnosis' ? (
         <DiagnosisFlow />
       ) : (
         <EmptyState icon={<LightbulbIcon size={32} />} message="לוח החשיבה יתווסף בקרוב" />
       )}
+
+      <ConfirmDialog
+        open={pendingImport !== null}
+        title={STRINGS.confirmations.importTitle}
+        body={STRINGS.confirmations.importBody}
+        confirmLabel={STRINGS.actions.import}
+        onConfirm={() => {
+          if (pendingImport) importSession(pendingImport);
+          setPendingImport(null);
+          show(STRINGS.feedback.imported, 'success');
+        }}
+        onCancel={() => setPendingImport(null)}
+      />
     </AppShell>
   );
 }

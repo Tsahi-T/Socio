@@ -52,9 +52,29 @@ function isExerciseData(value: unknown): value is ExerciseData {
         ) &&
         typeof value.votesPerParticipant === 'number'
       );
+    case 'goals':
+      return isItemArray(value.items);
+    case 'breakdown':
+      return (
+        Array.isArray(value.entries) &&
+        value.entries.every(
+          (e: unknown) =>
+            isRecord(e) &&
+            typeof e.goalId === 'string' &&
+            typeof e.goalText === 'string' &&
+            typeof e.purpose === 'string' &&
+            isItemArray(e.measures) &&
+            isItemArray(e.tasks)
+        )
+      );
     default:
       return false;
   }
+}
+
+/** Validate a single exercise-data value (used by session salvage). */
+export function validateExerciseData(value: unknown): value is ExerciseData {
+  return isExerciseData(value);
 }
 
 function isExercise(value: unknown): value is Exercise {

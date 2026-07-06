@@ -8,6 +8,8 @@ import { associationSunModule } from './association-sun';
 import { swotModule } from './swot';
 import { focusTopicsModule } from './focus-topics';
 import { votingModule } from './voting';
+import { strategicGoalsModule } from './strategic-goals';
+import { goalBreakdownModule } from './goal-breakdown';
 
 // Guard against double registration under HMR / StrictMode re-evaluation.
 if (!isExerciseRegistered(organizationNameModule.type)) registerExercise(organizationNameModule);
@@ -15,3 +17,5 @@ if (!isExerciseRegistered(associationSunModule.type)) registerExercise(associati
 if (!isExerciseRegistered(swotModule.type)) registerExercise(swotModule);
 if (!isExerciseRegistered(focusTopicsModule.type)) registerExercise(focusTopicsModule);
 if (!isExerciseRegistered(votingModule.type)) registerExercise(votingModule);
+if (!isExerciseRegistered(strategicGoalsModule.type)) registerExercise(strategicGoalsModule);
+if (!isExerciseRegistered(goalBreakdownModule.type)) registerExercise(goalBreakdownModule);

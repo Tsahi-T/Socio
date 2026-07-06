@@ -48,6 +48,20 @@ export const FLOW: readonly FlowStep[] = [
     description: 'כל משתתף בוחר בדיוק שלושה נושאים. המנחה מזין את הקולות.',
     navLabel: 'הצבעה',
   },
+  {
+    id: 'Strategic Goals',
+    type: 'strategic-goals',
+    title: 'יעדים אסטרטגיים',
+    description: 'נסחו יעדים אסטרטגיים — נושאי המיקוד שנבחרו מוצגים לצידכם להשראה.',
+    navLabel: 'יעדים',
+  },
+  {
+    id: 'Goals Breakdown',
+    type: 'goal-breakdown',
+    title: 'תכלס — מטרות, מדדים ומשימות',
+    description: 'פרטו כל יעד: מהי המטרה, איך נמדוד הצלחה ומהן המשימות העיקריות.',
+    navLabel: 'תכלס',
+  },
 ] as const;
 
 export const TOTAL_STEPS = FLOW.length;

@@ -56,7 +56,36 @@ export interface VotingData {
   votesPerParticipant: number;
 }
 
-export type ExerciseData = OrganizationData | AssociationsData | SwotData | FocusData | VotingData;
+/** Strategic goals derived from the voted focus topics. */
+export interface GoalsData {
+  kind: 'goals';
+  items: Item[];
+}
+
+/** Per-goal breakdown: purpose, measurable indicators, and key tasks. */
+export interface GoalBreakdown {
+  /** Matches the id of the strategic-goal Item it belongs to. */
+  goalId: string;
+  /** Mirrored goal text — keeps TXT round-trips self-contained. */
+  goalText: string;
+  purpose: string;
+  measures: Item[];
+  tasks: Item[];
+}
+
+export interface BreakdownData {
+  kind: 'breakdown';
+  entries: GoalBreakdown[];
+}
+
+export type ExerciseData =
+  | OrganizationData
+  | AssociationsData
+  | SwotData
+  | FocusData
+  | VotingData
+  | GoalsData
+  | BreakdownData;
 
 export type ExerciseDataKind = ExerciseData['kind'];
 

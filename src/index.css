@@ -26,6 +26,34 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Association-sun network (SNA-style) animations */
+@keyframes sna-dash {
+  to {
+    stroke-dashoffset: -22;
+  }
+}
+
+.sna-line {
+  stroke-dasharray: 3 8;
+  animation: sna-dash 1.8s linear infinite;
+}
+
+@keyframes sna-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.22);
+    opacity: 0.08;
+  }
+}
+
+.sna-pulse {
+  animation: sna-pulse 3.2s ease-in-out infinite;
+}
+
 /* Respect users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,

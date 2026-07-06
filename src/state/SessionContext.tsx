@@ -12,7 +12,7 @@ import { SESSION_VERSION } from '../engine/types';
 import { FLOW } from '../engine/flow.config';
 import { getExerciseModule } from '../engine/registry';
 import { createId } from '../lib/id';
-import { validateSession } from '../lib/validation';
+import { validateSession, validateExerciseData } from '../lib/validation';
 
 /* ------------------------------ Creation ------------------------------ */
 
@@ -112,11 +112,45 @@ function historyReducer(state: HistoryState, action: SessionAction): HistoryStat
 
 const STORAGE_KEY = 'ods:session:v1';
 
+/**
+ * Migrate a session persisted by an older app version (e.g. fewer flow steps):
+ * start from a fresh session and adopt any stored exercise whose position,
+ * type, and data shape still match. New steps stay empty; nothing is lost.
+ */
+function salvageSession(raw: unknown): Session | null {
+  if (typeof raw !== 'object' || raw === null) return null;
+  const stored = raw as { organizationName?: unknown; exercises?: unknown[] };
+  if (!Array.isArray(stored.exercises)) return null;
+  const storedExercises = stored.exercises;
+
+  const fresh = createInitialSession();
+  let adopted = 0;
+  fresh.exercises = fresh.exercises.map((exercise, i) => {
+    const candidate = storedExercises[i] as { type?: unknown; data?: unknown } | undefined;
+    if (
+      candidate &&
+      candidate.type === exercise.type &&
+      validateExerciseData(candidate.data) &&
+      candidate.data.kind === exercise.data.kind
+    ) {
+      adopted += 1;
+      return { ...exercise, data: candidate.data };
+    }
+    return exercise;
+  });
+  if (adopted === 0) return null;
+
+  fresh.organizationName =
+    typeof stored.organizationName === 'string' ? stored.organizationName : '';
+  return validateSession(fresh);
+}
+
 function loadPersistedSession(): Session | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    return validateSession(JSON.parse(raw));
+    const parsed: unknown = JSON.parse(raw);
+    return validateSession(parsed) ?? salvageSession(parsed);
   } catch {
     return null;
   }
